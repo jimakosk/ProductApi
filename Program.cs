@@ -59,7 +59,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Test1 Api v1");
+        c.InjectStylesheet("/StyleSheet1.css");
+    }); 
 }
 
 app.UseHttpsRedirection();
