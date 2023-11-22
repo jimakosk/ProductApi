@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using ProductApi.Data;
 using ProductApi.Models;
 using ProductApi.Servises;
+using System.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +36,18 @@ builder.Services.AddSingleton(jwtOptions);
 //).AddJwtBearer();
 // Add services to the container.
 
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseSqlServer("Data Source=(localdb)\\localdbdemo;Integrated Security=True", sqlServerOptionsAction: sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null
+        );
+        //sqlOptions.UseNetTopologySuite();
+    }));
 builder.Services.AddHttpClient<IProductService, ProductService>();
+//builder.Services.AddSingleton<IConfiguration>(Configuration);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

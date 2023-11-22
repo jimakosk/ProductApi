@@ -1,13 +1,22 @@
-﻿namespace ProductApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProductApi.Models
 {
     public class Product
     {
+        [Key]
         public int Id { get; set; }
-        public string Title { get; set; }
-        public decimal Price { get; set; }
-        public string Description { get; set; }
-        public string Category { get; set; }
-        public string Image { get; set; }
+
+        [ForeignKey("Shop")]
+        public int ShopID { get; set; } = 2;
+        public string Title { get; set; }=string.Empty;
+        public double Price { get; set; } = 0;
+        public string Description { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string Image { get; set; } = string.Empty;
+
+        public virtual Shop Shop { get; set; }
     }
 
 }

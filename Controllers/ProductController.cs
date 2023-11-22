@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProductApi.Models;
 using ProductApi.Servises;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,23 +24,30 @@ namespace ProductApi.Controllers
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productService.GetProductsAsync();
+
             if (products == null)
                 return NotFound();
             
-            return Ok(products);
+            return new JsonResult(products.First());
         }
-        [HttpGet("GetCon"),Authorize]
+        [HttpGet("GetCon")]
         public async Task<IActionResult> GetCon()
         {
 
             var test = configuration["ConnectionStrings"];
-            var takis = configuration.GetSection("SFTPSetting");
-            return Ok(test);
+            var takis = configuration.GetSection("JwtOptions:Issuer");
+            return Ok(takis);
         }
         [HttpGet,Authorize]
         public async Task<IActionResult> Get()
         {
             return Ok("Server is up");
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddProduct([FromBody] ProductDTO product) 
+        {
+
+            return Ok();
         }
     }
 
