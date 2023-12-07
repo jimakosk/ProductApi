@@ -1,5 +1,7 @@
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using ProductApi.Data;
 using ProductApi.Models;
@@ -36,17 +38,14 @@ builder.Services.AddSingleton(jwtOptions);
 //).AddJwtBearer();
 // Add services to the container.
 
+
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlServer("Data Source=(localdb)\\localdbdemo;Integrated Security=True", sqlServerOptionsAction: sqlOptions =>
-    {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null
-        );
-        //sqlOptions.UseNetTopologySuite();
-    }));
+    options.UseSqlServer(connectionString: builder.Configuration.GetConnectionString("default")));
+builder.Services.AddScoped<ICustomer,CustomerServise>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
 builder.Services.AddHttpClient<IProductService, ProductService>();
+builder.Services.AddHangfire(con => con.UseSqlServerStorage( builder.Configuration.GetConnectionString("default")));
 //builder.Services.AddSingleton<IConfiguration>(Configuration);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -54,7 +53,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
+app.UseHangfireServer();
+app.UseHangfireDashboard();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -72,5 +72,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+RecurringJob.AddOrUpdate(
+    "myrecurringjob",
+    () => Console.WriteLine("Recurring!"),
+    Cron.Minutely);
 
 app.Run();
