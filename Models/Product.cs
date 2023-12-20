@@ -9,7 +9,7 @@ namespace ProductApi.Models
         public int Id { get; set; }
 
         [ForeignKey("Shop")]
-        public int ShopID { get; set; } = 2;
+        public Guid ShopId { get; set; }
         public string Title { get; set; }=string.Empty;
         public double Price { get; set; } = 0;
         public string Description { get; set; } = string.Empty;

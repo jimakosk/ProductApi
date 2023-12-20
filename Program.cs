@@ -38,9 +38,9 @@ builder.Services.AddSingleton(jwtOptions);
 //).AddJwtBearer();
 // Add services to the container.
 
-
+var conn = builder.Configuration.GetConnectionString("default");
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlServer(connectionString: builder.Configuration.GetConnectionString("default")));
+    options.UseSqlServer(connectionString: conn));
 builder.Services.AddScoped<ICustomer,CustomerServise>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 

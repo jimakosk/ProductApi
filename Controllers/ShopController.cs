@@ -37,8 +37,10 @@ namespace ProductApi.Controllers
             });
             _db.SaveChanges();
             return Ok();
-        }[HttpGet("FindOne/{id}")]
-        public async Task<IActionResult> FindOne(int id) {
+        }
+        [HttpGet("FindOne/{id}")]
+        public async Task<IActionResult> FindOne(Guid id)
+        {
 
            
             var tes =await _db.Shops.Where(a=>a.Id==id).FirstOrDefaultAsync();

@@ -30,14 +30,14 @@ namespace ProductApi.Servises
             var response = await _httpClient.GetAsync("https://fakestoreapi.com/products");
             if (response.IsSuccessStatusCode)
             {
-               var r= await _db.Products.ToListAsync();
+               var products= await _db.Products.ToListAsync();
                 //var c = await _db.Products.Include(a=>a.Shop).ToListAsync();
                 //var content =  JsonConvert.DeserializeObject < List <Product>> (await response.Content.ReadAsStringAsync());
                 //content.ForEach(a => a.Id = new int()) ;
                
                 //_db.Products.AddRange(content);
                 //_db.SaveChanges();
-                return r;
+                return products;
             }
             return null; 
         }
